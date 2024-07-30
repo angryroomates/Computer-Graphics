@@ -1,0 +1,70 @@
+import pygame
+from pygame.locals import *
+from OpenGL.GL import *
+from OpenGL.GLUT import *
+from OpenGL.GLU import *
+
+pygame.init()
+display = (800, 600)
+pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
+glClearColor(1, 1, 1, 1)
+
+glMatrixMode(GL_PROJECTION)
+glLoadIdentity()
+gluOrtho2D(0, display[0], 0, display[1])
+glMatrixMode(GL_MODELVIEW)
+
+rect_x, rect_y = display[0] // 2, display[1] // 2
+angle = 0
+scale = 1
+
+
+def draw_rectangle(x, y, angle, scale):
+    glPushMatrix()
+    glTranslatef(x, y, 0.0)
+    glRotatef(angle, 0.0, 0.0, 1.0)
+    glScalef(scale, scale, 1.0)
+
+    glBegin(GL_QUADS)
+    glColor3f(1.0, 0.0, 0.0)
+    glVertex2f(-50, -25)
+    glVertex2f(50, -25)
+    glVertex2f(50, 25)
+    glVertex2f(-50, 25)
+    glEnd()
+
+    glPopMatrix()
+
+
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
+        rect_x -= 5
+    if keys[pygame.K_RIGHT]:
+        rect_x += 5
+    if keys[pygame.K_UP]:
+        rect_y += 5
+    if keys[pygame.K_DOWN]:
+        rect_y -= 5
+    if keys[pygame.K_q]:
+        angle += 5
+    if keys[pygame.K_e]:
+        angle -= 5
+    if keys[pygame.K_w]:
+        scale += 0.1
+    if keys[pygame.K_s]:
+        scale -= 0.1
+        if scale < 0.1:
+            scale = 0.1
+
+    glClear(GL_COLOR_BUFFER_BIT)
+    draw_rectangle(rect_x, rect_y, angle, scale)
+    pygame.display.flip()
+    pygame.time.wait(30)
+
+pygame.quit()
